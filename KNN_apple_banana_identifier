@@ -1,0 +1,75 @@
+import cv2
+import math
+ 
+"""frameWidth = 180
+frameHeight = 180
+cap = cv2.VideoCapture(0)
+cap.set(3, frameWidth)
+cap.set(4, frameHeight)
+cap.set(10, 150)"""
+ 
+# LOAD AN IMAGE USING 'IMREAD'
+apple = cv2.cvtColor(cv2.imread("FruitPics/apple1.jpeg"), cv2.COLOR_BGR2GRAY)
+apple2 = cv2.cvtColor(cv2.imread("FruitPics/apple2.jpg"), cv2.COLOR_BGR2GRAY)
+banana = cv2.cvtColor(cv2.imread("FruitPics/banana1.jpg"), cv2.COLOR_BGR2GRAY)
+banana2 = cv2.cvtColor(cv2.imread("FruitPics/homepage-banana@2x.png"), cv2.COLOR_BGR2GRAY)
+testImg = cv2.cvtColor(cv2.imread("FruitPics/appleTest.jpeg"), cv2.COLOR_BGR2GRAY)
+#banana2 = cv2.cvtColor(cv2.imread("FruitPics/homepage-banana@2x.png"), cv2.COLOR_BGR2GRAY)
+
+images = [[apple, "apple"], [apple2, "apple"], [banana, "banana"],[banana2, "banana"]]
+imgKVal = [None]*len(images)
+
+for i in range(0, len(images)):
+
+    if(images[i][0].shape[1]<testImg.shape[1]):
+        width = images[i][0].shape[1]
+    else:
+        width = testImg.shape[1]
+
+    if(images[i][0].shape[0]<testImg.shape[0]):
+        height = images[i][0].shape[0]
+    else:
+        height = testImg.shape[0]
+
+
+    distances = [None]*(width*height)
+    distIndex = 0
+
+    for w in range(0, width):
+        for h in range(0, height):
+            dist = math.sqrt((int)(images[i][h][w]*images[i][h][w])+(int)(testImg[h][w]*testImg[h][w]))
+            distances[distIndex] = dist
+            distIndex +=1
+
+    total = 0
+    for d in range(len(distances)):
+        total += distances[d]
+    imgKVal[i] = ((float)(total))/len(distances)
+
+    print(imgKVal[0])
+    print(imgKVal[1])
+
+smallest = 0
+for i in range(len(imgKVal)):
+    if(imgKVal[i]<smallest):
+        smallest = imgKVal[i]
+
+if(smallest == imgKVal[0] or smallest == imgKVal[1]):
+    print("it's an apple")
+else:
+    print("it's a banana")
+
+            
+
+# DISPLAY
+cv2.imshow("apple",apple)
+cv2.imshow("banana", banana)
+cv2.imshow('test', testImg)
+
+cv2.waitKey(0)
+
+"""while True:
+    success, img = cap.read()
+    cv2.imshow("Result", img)
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break"""
