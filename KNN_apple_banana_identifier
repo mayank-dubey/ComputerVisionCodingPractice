@@ -1,26 +1,32 @@
 import cv2
 import math
  
-"""frameWidth = 180
-frameHeight = 180
-cap = cv2.VideoCapture(0)
-cap.set(3, frameWidth)
-cap.set(4, frameHeight)
-cap.set(10, 150)"""
- 
-# LOAD AN IMAGE USING 'IMREAD'
+#given data set
 apple = cv2.cvtColor(cv2.imread("FruitPics/apple1.jpeg"), cv2.COLOR_BGR2GRAY)
 apple2 = cv2.cvtColor(cv2.imread("FruitPics/apple2.jpg"), cv2.COLOR_BGR2GRAY)
+apple3 = cv2.cvtColor(cv2.imread("FruitPics/apple3.png"), cv2.COLOR_BGR2GRAY)
+apple4 = cv2.cvtColor(cv2.imread("FruitPics/apple4.jpg"), cv2.COLOR_BGR2GRAY)
 banana = cv2.cvtColor(cv2.imread("FruitPics/banana1.jpg"), cv2.COLOR_BGR2GRAY)
-banana2 = cv2.cvtColor(cv2.imread("FruitPics/homepage-banana@2x.png"), cv2.COLOR_BGR2GRAY)
-testImg = cv2.cvtColor(cv2.imread("FruitPics/appleTest.jpeg"), cv2.COLOR_BGR2GRAY)
-#banana2 = cv2.cvtColor(cv2.imread("FruitPics/homepage-banana@2x.png"), cv2.COLOR_BGR2GRAY)
+banana2 = cv2.cvtColor(cv2.imread("FruitPics/banana2.png"), cv2.COLOR_BGR2GRAY)
+banana3 = cv2.cvtColor(cv2.imread("FruitPics/banana3.jpg"), cv2.COLOR_BGR2GRAY)
+banana4 = cv2.cvtColor(cv2.imread("FruitPics/banana4.jpg"), cv2.COLOR_BGR2GRAY)
+banana5 = cv2.cvtColor(cv2.imread("FruitPics/banana5.jpg"), cv2.COLOR_BGR2GRAY)
 
-images = [[apple, "apple"], [apple2, "apple"], [banana, "banana"],[banana2, "banana"]]
+#image to be identified
+testImg = cv2.cvtColor(cv2.imread("FruitPics/bananaTest.jpeg"), cv2.COLOR_BGR2GRAY)
+
+
+#puts data images in array
+images = [[apple, "apple"], [apple2, "apple"], [apple3, "apple"], [banana, "banana"],[banana2, "banana"], [banana2, "banana"]]
+
+#empty array for "distances" to be put in
 imgKVal = [None]*len(images)
 
+
+#cycles through images in data set
 for i in range(0, len(images)):
 
+    #crops images so dimensions match
     if(images[i][0].shape[1]<testImg.shape[1]):
         width = images[i][0].shape[1]
     else:
@@ -33,43 +39,28 @@ for i in range(0, len(images)):
 
 
     distances = [None]*(width*height)
-    distIndex = 0
-
+    count = 0
+    variable = images[i][0][0][0].astype('float32')
     for w in range(0, width):
-        for h in range(0, height):
-            dist = math.sqrt((int)(images[i][h][w]*images[i][h][w])+(int)(testImg[h][w]*testImg[h][w]))
-            distances[distIndex] = dist
-            distIndex +=1
+       for h in range(0, height):
+           var1 = images[i][0][h][w].astype('float32')
+           var2 = testImg[h][w].astype('float32')
+           distances[count] = int((var1-var2)**2)    
+           count+=1
+    imgKVal[i] = math.sqrt(abs(sum(distances)))
+    print(imgKVal[i])
 
-    total = 0
-    for d in range(len(distances)):
-        total += distances[d]
-    imgKVal[i] = ((float)(total))/len(distances)
 
-    print(imgKVal[0])
-    print(imgKVal[1])
-
-smallest = 0
+#finds nearest neighbor
+smallest = images[0][1]
+smallestKVal = imgKVal[0]
 for i in range(len(imgKVal)):
-    if(imgKVal[i]<smallest):
-        smallest = imgKVal[i]
+    if(imgKVal[i]<smallestKVal):
+        smallest = images[i][1]
 
-if(smallest == imgKVal[0] or smallest == imgKVal[1]):
-    print("it's an apple")
-else:
-    print("it's a banana")
+#displays image and what it is 
+cv2.imshow("test", testImg)
+print("its a "+ smallest)
 
-            
-
-# DISPLAY
-cv2.imshow("apple",apple)
-cv2.imshow("banana", banana)
-cv2.imshow('test', testImg)
-
+           
 cv2.waitKey(0)
-
-"""while True:
-    success, img = cap.read()
-    cv2.imshow("Result", img)
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break"""
