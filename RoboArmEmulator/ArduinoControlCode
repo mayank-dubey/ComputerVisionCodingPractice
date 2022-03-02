@@ -1,0 +1,16 @@
+String serData;
+
+void setup() {
+  Serial.begin(9600);
+  Serial.println("Arduino is ready!");
+}
+
+void loop() {
+  while(Serial.available() > 0){
+    String rec = Serial.readString();
+    Serial.print("Message received: ");
+    Serial.println(rec);
+  }
+
+delay(10);
+}
