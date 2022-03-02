@@ -1,0 +1,53 @@
+/*
+
+*/
+#include <Servo.h>
+
+Servo servo1;
+Servo servo2;
+Servo servo3;
+Servo servo4;
+
+int xDirect = A0;
+int yDirect = A1;
+
+int xD;
+int yD;
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(xDirect, INPUT);
+  pinMode(yDirect, INPUT);
+  
+  servo1.attach(9);
+  servo2.attach(10);
+  servo3.attach(11);
+  servo4.attach(12);
+  
+  servo1.write(90);
+  servo2.write(90);
+  servo3.write(90);
+  servo4.write(90);
+  
+}
+
+void loop() {
+  delay(200);
+  xD = analogRead(xDirect);
+  yD = analogRead(yDirect);
+  
+  /*Serial.print(xD/5.7);
+  Serial.print(" : ");
+  Serial.println(yD/5.7);*/
+  Serial.print(xD);
+  if(yD/5.7 > 20){
+    servo3.write(xD/5.7);
+    servo1.write(abs(180-(xD/5.7)));
+  }
+  if(xD/5.7 > 20){
+    servo2.write(yD/5.70);
+    servo4.write(abs(180-(yD/5.7)));
+  }
+ 
+}
+
