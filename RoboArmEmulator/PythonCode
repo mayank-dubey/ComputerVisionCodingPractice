@@ -5,6 +5,7 @@ import time
 import math
 import serial
 
+
 cap = cv2.VideoCapture(0)
 
 mpHands = mp.solutions.hands
@@ -22,6 +23,11 @@ wristY = 0
 palmCheck = False
 palmY = 0
 palmY = 0
+
+"""for i in range(0,180):
+    num = input("Enter number: ")
+    ser.write(str.encode(num))
+    print(ser.readline())"""
 
 while True:
     success, img = cap.read()
@@ -74,21 +80,25 @@ while True:
                     cv2.rectangle(img, (wristX, wristY), (palmX, wristY), (0, 0, 0), thickness=5, lineType=8, shift=0)
                     cv2.rectangle(img, (palmX, wristY), (palmX, palmY), (0, 0, 0), thickness=5, lineType=8, shift=0)
                     
-                    if(width!=0):
-                        angle = str(math.atan(height/width)*180/3.1415)
+                    if(int(width)!=0):
+                        intAngle = int(math.atan(height/width)*180/3.1415)//20
+                        if intAngle<0:
+                            intAngle+=10
+                        angle = str(intAngle)
                     else: 
-                        angle = "90"
-                    ser.write(str.encode(angle))
+                        angle = "5"
                     wristCheck = False
                     palmCheck = False
+                    ser.write(angle.encode())
                     print(angle)
-                    break
-            #print(ser.readline())
+                        #print(ser.readline())
+            mpDraw.draw_landmarks(img, handLms, mpHands.HAND_CONNECTIONS)
+    
+    #print(ser.readline())
                 
                 
                 
             
-            #mpDraw.draw_landmarks(img, handLms, mpHands.HAND_CONNECTIONS)
     """cTime = time.time()
     fps = 1 / (cTime - pTime)
     pTime = cTime"""
