@@ -24,6 +24,17 @@ palmCheck = False
 palmY = 0
 palmY = 0
 
+leftMostCheck = False
+leftMostY = 0
+leftMostX = 0
+
+rightMostCheck = False
+rightMostY = 0 
+rightMostX = 0
+
+dWData = [None]*5
+frames = 0
+
 """for i in range(0,180):
     num = input("Enter number: ")
     ser.write(str.encode(num))
@@ -63,22 +74,43 @@ while True:
                 if id == 20: #pinky
                     cv2.circle(img, (cx, cy), 15, (255, 0, 255), cv2.FILLED)"""
 
+                if id == 17: #pinky-most side
+                    cv2.circle(img, (cx, cy), 15, (255, 0, 255), cv2.FILLED)
+                if id == 5: #index-most side
+                    cv2.circle(img, (cx, cy), 15, (255, 0, 255), cv2.FILLED)
 
                 if id==0:
                     wristCheck = True
                     wristX = cx
                     wristY = cy
                 
+                elif id==5:
+                    rightMostCheck = True
+                    rightMostY = cy
+                    rightMostX = cx
+
                 elif id == 9:
                     palmCheck = True
                     palmX = cx
                     palmY = cy
+                
+                elif id==17:
+                    leftMostCheck = True
+                    leftMostY = cy
+                    leftMostX = cx
+                
+                if leftMostCheck and rightMostCheck:
+                    wideness =  rightMostY-leftMostX
+                    dWData = [wideness]+dWData[0:5]
+                    print(dWData)
+                    leftMostCheck = False
+                    rightMostCheck = False
 
                 if palmCheck and wristCheck:
                     height = wristY - palmY
                     width = wristX - palmX
-                    cv2.rectangle(img, (wristX, wristY), (palmX, wristY), (0, 0, 0), thickness=5, lineType=8, shift=0)
-                    cv2.rectangle(img, (palmX, wristY), (palmX, palmY), (0, 0, 0), thickness=5, lineType=8, shift=0)
+                    """cv2.rectangle(img, (wristX, wristY), (palmX, wristY), (0, 0, 0), thickness=5, lineType=8, shift=0)
+                    cv2.rectangle(img, (palmX, wristY), (palmX, palmY), (0, 0, 0), thickness=5, lineType=8, shift=0)"""
                     
                     if(int(width)!=0):
                         intAngle = int(math.atan(height/width)*180/3.1415)//20
@@ -90,7 +122,7 @@ while True:
                     wristCheck = False
                     palmCheck = False
                     ser.write(angle.encode())
-                    print(angle)
+                    #print(angle)
                         #print(ser.readline())
             mpDraw.draw_landmarks(img, handLms, mpHands.HAND_CONNECTIONS)
     
