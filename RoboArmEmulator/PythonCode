@@ -32,8 +32,7 @@ rightMostCheck = False
 rightMostY = 0 
 rightMostX = 0
 
-dWData = [None]*5
-frames = 0
+YAngleTrans = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']
 
 """for i in range(0,180):
     num = input("Enter number: ")
@@ -45,7 +44,7 @@ while True:
     imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     results = hands.process(imgRGB)
     # print(results.multi_hand_landmarks)
-    #cv2.rectangle(img, (0,0), (640, 480), (0, 0, 0), thickness=500, lineType=8, shift=0) 
+    cv2.rectangle(img, (350,400), (150, 100), (0, 0, 0), thickness=5, lineType=8, shift=0) 
 
     if results.multi_hand_landmarks:
         for handLms in results.multi_hand_landmarks:
@@ -100,9 +99,17 @@ while True:
                     leftMostX = cx
                 
                 if leftMostCheck and rightMostCheck:
-                    wideness =  rightMostY-leftMostX
-                    dWData = [wideness]+dWData[0:5]
-                    print(dWData)
+                    wideness =  int(math.sqrt((rightMostY-leftMostY)**2+(rightMostX-leftMostX)**2))
+                    #dWData = [wideness]+dWData[0:5]
+                    #print(wideness)
+                    YAngle = (wideness-65)//4
+                    print(YAngle)
+                    if(YAngle<=9 and YAngle >=0):
+                        newYAngle = YAngleTrans[YAngle]
+                        #print(newYAngle)
+                        #print(YAngle)
+                        ser.write(newYAngle.encode())
+                        #print(dWData)
                     leftMostCheck = False
                     rightMostCheck = False
 
