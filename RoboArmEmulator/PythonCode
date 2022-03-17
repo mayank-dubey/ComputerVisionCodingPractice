@@ -14,7 +14,7 @@ mpDraw = mp.solutions.drawing_utils
 
 pTime = 0
 cTime = 0
-ser = serial.Serial('COM3', baudrate=9600, timeout=1)
+#ser = serial.Serial('COM3', baudrate=9600, timeout=1)
 
 wristCheck = False
 wristX = 0
@@ -34,6 +34,8 @@ rightMostX = 0
 
 YAngleTrans = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']
 
+a=0
+
 """for i in range(0,180):
     num = input("Enter number: ")
     ser.write(str.encode(num))
@@ -43,8 +45,6 @@ while True:
     success, img = cap.read()
     imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     results = hands.process(imgRGB)
-    # print(results.multi_hand_landmarks)
-    cv2.rectangle(img, (350,400), (150, 100), (0, 0, 0), thickness=5, lineType=8, shift=0) 
 
     if results.multi_hand_landmarks:
         for handLms in results.multi_hand_landmarks:
@@ -71,19 +71,21 @@ while True:
                     cv2.circle(img, (cx, cy), 15, (255, 0, 255), cv2.FILLED)
 
                 if id == 20: #pinky
-                    cv2.circle(img, (cx, cy), 15, (255, 0, 255), cv2.FILLED)"""
+                    cv2.circle(img, (cx, cy), 15, (255, 0, 255), cv2.FILLED)
 
                 if id == 17: #pinky-most side
                     cv2.circle(img, (cx, cy), 15, (255, 0, 255), cv2.FILLED)
                 if id == 5: #index-most side
-                    cv2.circle(img, (cx, cy), 15, (255, 0, 255), cv2.FILLED)
+                    cv2.circle(img, (cx, cy), 15, (255, 0, 255), cv2.FILLED)"""
 
                 if id==0:
+                    wristZ = int(lm.z*10000000)
                     wristCheck = True
                     wristX = cx
                     wristY = cy
                 
                 elif id==5:
+                    rightMostZ=int(lm.z*100)
                     rightMostCheck = True
                     rightMostY = cy
                     rightMostX = cx
@@ -94,25 +96,22 @@ while True:
                     palmY = cy
                 
                 elif id==17:
+                    leftMostZ = int(lm.z*100)
                     leftMostCheck = True
                     leftMostY = cy
                     leftMostX = cx
                 
+                #back and forth movements
                 if leftMostCheck and rightMostCheck:
-                    wideness =  int(math.sqrt((rightMostY-leftMostY)**2+(rightMostX-leftMostX)**2))
-                    #dWData = [wideness]+dWData[0:5]
-                    #print(wideness)
-                    YAngle = (wideness-65)//4
-                    print(YAngle)
-                    if(YAngle<=9 and YAngle >=0):
-                        newYAngle = YAngleTrans[YAngle]
-                        #print(newYAngle)
-                        #print(YAngle)
-                        ser.write(newYAngle.encode())
-                        #print(dWData)
-                    leftMostCheck = False
-                    rightMostCheck = False
+                    topZ = (rightMostZ+leftMostZ)//2
+                    a=0
+                    if(a<180):
+                        a = int(wristZ-(-topZ))*10
+                    #print(a)
+                    
 
+
+                #side to side movements
                 if palmCheck and wristCheck:
                     height = wristY - palmY
                     width = wristX - palmX
@@ -128,9 +127,10 @@ while True:
                         angle = "5"
                     wristCheck = False
                     palmCheck = False
-                    ser.write(angle.encode())
-                    #print(angle)
-                        #print(ser.readline())
+                    #ser.write(angle.encode())
+                
+                if a and angle:
+                    print(angle, a)
             mpDraw.draw_landmarks(img, handLms, mpHands.HAND_CONNECTIONS)
     
     #print(ser.readline())
