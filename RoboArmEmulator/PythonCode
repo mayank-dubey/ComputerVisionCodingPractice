@@ -14,7 +14,7 @@ mpDraw = mp.solutions.drawing_utils
 
 pTime = 0
 cTime = 0
-#ser = serial.Serial('COM3', baudrate=9600, timeout=1)
+ser = serial.Serial('COM3', baudrate=9600, timeout=1)
 
 wristCheck = False
 wristX = 0
@@ -104,10 +104,13 @@ while True:
                 #back and forth movements
                 if leftMostCheck and rightMostCheck:
                     topZ = (rightMostZ+leftMostZ)//2
-                    a=0
+                    a=5
                     if(a<180):
-                        a = int(wristZ-(-topZ))*10
-                    #print(a)
+                        a = int((wristZ-(-topZ))*10+90)
+                        a = int(a/20)
+                    if(a>=0 and a<=9):
+                        ser.write(YAngleTrans[a].encode())
+                    #ser.write(YAngleTrans[a])
                     
 
 
@@ -127,7 +130,7 @@ while True:
                         angle = "5"
                     wristCheck = False
                     palmCheck = False
-                    #ser.write(angle.encode())
+                    ser.write(angle.encode())
                 
                 if a and angle:
                     print(angle, a)
