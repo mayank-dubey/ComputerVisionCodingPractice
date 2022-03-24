@@ -14,7 +14,7 @@ mpDraw = mp.solutions.drawing_utils
 
 pTime = 0
 cTime = 0
-#ser = serial.Serial('COM3', baudrate=9600, timeout=1)
+ser = serial.Serial('COM3', baudrate=9600, timeout=1)
 
 wristCheck = False
 wristX = 0
@@ -115,7 +115,8 @@ while True:
                         elif(a>9):
                             a=9
                     if(a>=0 and a<=9 and count==0):
-                        #ser.write(YAngleTrans[a].encode())
+                        ser.write(YAngleTrans[a].encode())
+                        print(YAngleTrans[a].encode())
                         count=1
                     
 
@@ -137,11 +138,12 @@ while True:
                     wristCheck = False
                     palmCheck = False
                     if(count==1):
-                        #ser.write(angle.encode())
+                        ser.write(angle.encode())
+                        print(angle.encode())
                         count=0
                 
-                if a and angle:
-                    print(angle, ':', YAngleTrans[a])
+                """if a and angle:
+                    print(angle, ':', YAngleTrans[a])"""
 
             mpDraw.draw_landmarks(img, handLms, mpHands.HAND_CONNECTIONS)
     
